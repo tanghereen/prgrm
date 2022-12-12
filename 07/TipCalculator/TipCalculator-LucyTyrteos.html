@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<!-- required meta tags -->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width-device-width, initial-scale=1">
+
+<!-- javascript -->
+
+<script>
+	// calculate the function
+	const handleCalculation = () => {
+		const inputBill = parseInt(document.getElementById('input-bill').value);
+		const inputTip = parseInt(document.getElementById('input-tip').value);
+		const inputPerson = parseInt(document.getElementById('input-person').value);
+
+		if (validateInput(inputBill) && validateInput(inputTip) && validateInput(inputPerson)) {
+			warning.innerText = '';
+			const totalTip = (inputBill * inputTip) / 100;
+			const totalBill = totalTip + inputBill;
+			const perPersonBill = totalBill / inputPerson;
+
+			document.getElementById('total-tip').innerText = totalTip.toFixed(2);
+			document.getElementById('per-person-bill').innerText = perPersonBill.toFixed(2);
+			document.getElementById('total-bill').innerText = totalBill.toFixed(2);
+		}
+		else {
+			warning.innerText = 'Please enter valid amount.';
+		}
+	};
+
+	// input validation
+	const validateInput = (input) => {
+		return (/^\d+$/).test(input);
+	};
+
+	// handle reset button
+	const handleReset = () => {
+		warning.innerText = '';
+		document.getElementById('input-bill').value = '';
+		document.getElementById('input-tip').value = '';
+		document.getElementById('input-person').value = '';
+		document.getElementById('total-tip').innerText = '0.00';
+		document.getElementById('per-person-bill').innerText = '0.00';
+		document.getElementById('total-bill').innerText = '0.00';
+	};
+</script>
+
+<!-- cascading style sheets -->
+
+<style>
+	/* Portrait and Landscape */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3) { 
+
+}
+
+/* Portrait */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: portrait) { 
+
+}
+
+/* Landscape */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: landscape) { 
+
+}
+	* {
+		box-sizing: border-box;
+	}
+body {
+	background-color: darkseagreen;
+	font-family: "Raleway", sans-serif;
+}
+
+p {
+	background-color: darkslategray;
+	font-family: "Raleway", sans-serif;
+	color: #FFFFFF;
+	position: absolute;
+
+}
+
+.container {
+	width: 350px;
+	height: 550px;
+	background-color: #fff;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	border-radius: 20px;
+}
+
+h1 {
+	background-color: darkslategray;
+	color: #fff;
+	font-weight: 100;
+	font-size: 20px;
+	text-align: center;
+	padding: auto;
+	margin: auto;
+	
+}
+
+input,
+select {
+	border: none;
+	border-bottom: 1px solid #0074d9;
+}
+
+input:focus,
+select:focus {
+	border: 1px solid #0074d9;
+	outline: none;
+}
+
+select {
+	width: 88% !important;
+}
+
+button {
+	margin: 20px auto;
+	width: 150px;
+	height: 50px;
+	background-color: darkslategray;
+	color: #fff;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+	text-align: center;
+	justify-content: center;
+	
+}
+
+ </style>
+
+<!-- bootstrap CSS -->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<!-- start HTML -->
+
+<title>What's That Tip?</title>
+</head>
+    <body>
+    <div class="container">
+        <div class="wrapper">
+        <div class="row">
+            <div class="col">
+        <h1>Enter bill $</h1>
+		<br>
+		<br>
+    </form>
+</div>
+    <div class="col">
+    	<form>
+    	<h1>Select tip %</h1>
+<br>
+<br>
+    </form>
+    </div>
+         <div class="col">
+                <h1>Split check #</h1>
+			 <br>
+			<br>
+
+		 </div>
+	<section>
+		<div class="row d-flex justify-content-between">
+			<div class="col-md-6 p-5 border">
+				<h3 class="text-center text-success">Tip Calculator</h3>
+				<hr>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Total Tip</th>
+							<th scope="col" id='total-tip'>0.00</th>
+						</tr>
+						<tr>
+							<th scope="col">Per Person Bill </th>
+							<th scope="col" id="per-person-bill">0.00</th>
+						</tr>
+						<tr>
+							<th scope="col">Total Bill</th>
+							<th scope="col" id='total-bill'>0.00</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="col-md-5 border p-5">
+				<h6>BILL $</h6>
+				<input type="text" id="input-bill" class='form-control m-2 w-50'>
+				<h6>TIP %</h6>
+				<input type="text" id="input-tip" class='form-control m-2 w-50'>
+				<h6>PERSON #</h6>
+				<input type="text" id="input-person" class='form-control m-2 w-50'>
+				<p class="text-danger" id='warning'></p>
+				<button onclick="handleCalculation()" class="btn btn-success m-2">Calculate</button>
+				<button onclick="handleReset()" class="btn btn-dark m-2">Reset</button>
+			</div>
+		</div>
+	</section>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
