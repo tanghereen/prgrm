@@ -1,0 +1,269 @@
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF"
+          crossorigin="anonymous">
+    <style>
+        .link {
+            color: blue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="initStorage()">
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h1>Products List</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Image</td>
+                    <td>Description</td>
+                    <td>Price</td>
+                    <td>Cart</td>
+                </tr>
+                </thead>
+                <tbody id="productsBody">
+                    <tr>
+                        <td><img width="100" src="https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/images/apple.jpg" alt="Apple"></td>
+                        <td>An apple is an edible fruit produced by an apple tree (Malus domestica). Apple trees are cultivated worldwide and are the most widely grown species in the genus Malus.</td>
+                        <td>$1.00</td>
+                        <td onclick="addItem('Apple', '1.00', 1)" class="link">Add to Cart</td>
+                    </tr>
+                    <tr>
+                        <td><img width="100" src="https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/images/banana.jpg" alt="Bananas"></td>
+                        <td>A banana is an elongated, edible fruit – botanically a berry – produced by several kinds of large herbaceous flowering plants in the genus Musa.</td>
+                        <td>$1.50</td>
+                        <td onclick="addItem('Bananas', '1.50', 1)" class="link">Add to Cart</td>
+                    </tr>
+                    <tr>
+                        <td><img width="100" src="https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/images/cherry.jpg" alt="Cherry"></td>
+                        <td>A cherry is the fruit of many plants of the genus Prunus, and is a fleshy drupe (stone fruit)</td>
+                        <td>$2.00</td>
+                        <td onclick="addItem('Cherry', '2.00', 1)" class="link">Add to Cart</td>
+                    </tr>
+                    <tr>
+                        <td><img width="100" src="https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/images/grapes.jpg" alt="Grapes"></td>
+                        <td>A grape is a fruit, botanically a berry, of the deciduous woody vines of the flowering plant genus Vitis.</td>
+                        <td>$2.50</td>
+                        <td onclick="addItem('Grapes', '2.50', 1)" class="link">Add to Cart</td>
+                    </tr>
+                    <tr>
+                        <td><img width="100" src="https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/images/orange.jpg" alt="Orange"></td>
+                        <td>The orange is the fruit of various citrus species in the family Rutaceae (see list of plants known as orange); it primarily refers to Citrus sinensis, which is also called sweet orange, to distinguish it from the related Citrus aurantium, referred to as bitter orange.</td>
+                        <td>$3.00</td>
+                        <td onclick="addItem('Orange', '3.00', 1)" class="link">Add to Cart</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-4">
+            <h1>Shopping Cart</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Price</td>
+                    <td>Quantity</td>
+                    <td>Total</td>
+                </tr>
+                </thead>
+                <tbody id="cartBody">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="1" class="text-end">Subtotal:</td>
+                        <td class="text-end">$<span id="subTotal"></span></td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="text-end">Tax Amount:</td>
+                        <td class="text-end">$<span id="taxAmount"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="text-end">Grand Total:</td>
+                        <td class="text-end">$<span id="grandTotal"></span></td>
+                    </tr>
+                    <button type="button" onclick="submitCartInfo()" class="btn btn-primary">Submit</button>
+
+                </tfoot>
+            </table>
+            <hr>
+                    <div class="container"> <div class="wrapper"> <div class="outer-card"> <div class="forms"> <div class="input-items"> <span>Card Number</span> <input placeholder=".... .... .... ...." data-slots="." data-accept="\d" size="19"> </div> <div class="input-items"> <span>Name on card</span> <input placeholder="Samuel Iscon" > </div> <div class="one-line"> <div class="input-items"> <span>Expiry Date</span> <input placeholder="mm/yyyy" data-slots="my"> </div> <div class="input-items"> <span>CVV</span> <input placeholder="..." data-slots="." data-accept="\d" size="3"> </div> </div> <div class="input-buttons"> <a href="#">Save Changes</a> </div> </div> </div> </div> </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const items = [];
+
+    /**
+     * In this method we will initialize the session storage object to be used.
+     */
+    function initStorage() {
+        let itemsJSON = JSON.stringify(items);
+        sessionStorage.setItem("items", itemsJSON);
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch item object from session storage for use and store in an object
+     * 2. add the item to an array using the provided parameters
+     * 3. save the updated object back into session storage
+     * 4. call the calcTotal() to display
+     *
+     * @param itemName the name of the item to display in the session storage
+     * @param itemPrice the unit price of the item to store in the session object
+     * @param itemQty the inital qty of the item in the session object
+     */
+    function addItem(itemName, itemPrice, itemQty) {
+        // 1. get items from storage and convert to object array
+        let items = JSON.parse(sessionStorage.getItem("items"));
+
+        // 2. add item to array
+        let item = { name: itemName, price: itemPrice, qty: itemQty };
+        items.push(item);
+
+        // 3. save updates in storage
+        let itemsJSON = JSON.stringify(items);
+        sessionStorage.setItem("items", itemsJSON);
+
+        // update total
+        calcTotal();
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. increment the qty by one for the matching item (by name)
+     * 3. save the updated item back in session storage
+     * 4. call the calcTotal() to display
+     *
+     * @param itemName
+     */
+    function incrementQty(itemName) {
+        // get item from storage and increment qty by 1
+        let items = JSON.parse(sessionStorage.getItem("items"));
+        for (let i=0; i<items.length; i++) {
+            // increment the qty for the matching item
+            if (items[i].name === itemName) {
+                items[i].qty += 1;
+            }
+        }
+
+        // save the updated value back into storage
+        let itemsJSON = JSON.stringify(items);
+        sessionStorage.setItem("items", itemsJSON);
+
+        // call method to calculate the total and display
+        calcTotal();
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. decrement the qty by one for the matching item (by name)
+     * 3. save the updated item back in session storage
+     * 4. call the calcTotal() to display
+     *
+     * @param itemName
+     */
+    function decrementQty(itemName) {
+        // get item from storage and decrement qty by 1
+        let items = JSON.parse(sessionStorage.getItem("items"));
+        for (let i=0; i<items.length; i++) {
+            // increment the qty for the matching item
+            if (items[i].name === itemName) {
+                items[i].qty -= 1;
+            }
+        }
+
+        // save the updated value back into storage
+        let itemsJSON = JSON.stringify(items);
+        sessionStorage.setItem("items", itemsJSON);
+
+        // call method to calculate the total and display
+        calcTotal();
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. loop through the items array
+     * 3. for each loop iteration calc the extended price and add the row to cart
+     * 
+     * @param itemName
+     */
+    function calcTotal() {
+        // get items from storage
+        let items = JSON.parse(sessionStorage.getItem("items"));
+
+        // clear cartBody so that it can be updated
+        let totalDiv = document.getElementById("cartBody");
+        totalDiv.innerHTML = "";
+
+        // loop and calc item total (price * qty)
+        for (let i=0; i<items.length; i++) {
+            // update div 'total' with
+            let row = `<tr>
+								<td>${items[i].name}</td>
+								<td>$${items[i].price}</td>
+								<td>
+                                    ${items[i].qty}
+                                    <span onClick="incrementQty('${items[i].name}')" class="link">(+)</span>
+                                    <span onClick="decrementQty('${items[i].name}')" class="link">(-)</span>
+								</td>
+								<td>$${items[i].price * items[i].qty}</td>
+							</tr>`;
+            totalDiv.innerHTML += row;
+        }
+    }
+
+    const cartInfo = [];
+    let subTotal = 0;
+    const TAX_RATE = .045;
+    let taxAmount = 0;
+    let grandTotal = 0;
+
+
+    function submitCartInfo() {
+            let ajaxRequest = new XMLHttpRequest();
+            ajaxRequest.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let responseArray = JSON.parse(this.responseText);
+                    // print array response
+                    let outputString = '';
+                    for (let i=0; i<responseArray.length; i++) {
+                        subtotal += responseArray[i].unitPrice * responseArray[i].quantity;
+                        outputString += `<tr>
+                                            <td>${responseArray[i].name}</td>
+                                            <td>$${responseArray[i].unitPrice}</td>
+                                            <td>${responseArray[i].quantity}</td>
+                                            <td>$${subtotal.toFixed(2)}</td>
+                                        </tr>`;
+                    }
+                    taxAmount = subtotal * TAX_RATE;
+                    grandTotal = subtotal + taxAmount;
+                    document.getElementById("respMsgText").innerHTML = outputString;
+                    document.getElementById("subtotal").innerHTML = subtotal.toFixed(2);
+                    document.getElementById("taxAmount").innerHTML = taxAmount.toFixed(2);
+                    document.getElementById("grandTotal").innerHTML = grandTotal.toFixed(2);
+                }
+            };
+
+            ajaxRequest.open("POST", "https://tyrteoslm.stu.cofc.edu/PROGRAMMING/13/examples/e13.3-echo.php", true);
+            ajaxRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            ajaxRequest.send(JSON.stringify(cartInfo));
+        }
+
+
+</script>
+</body>
+</html>

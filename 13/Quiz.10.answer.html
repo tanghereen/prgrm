@@ -1,0 +1,199 @@
+<!--
+    Quiz No.10: WebStorage
+
+Modify the 13.2-in-class.html assignment to include the following:
+
+File Names
+ - Duplicate and rename 13.2-in-class.html to Quiz10.html
+ - Create a PHP script called Quiz10.php
+
+Directions
+Write a PHP script that returns an array of five objects for use in the application. Use AJAX and JSON to request
+the objects and store the response in browser storage. The PHP script should set all objects to have a quantity
+of five. Each object will have the following attributes:
+
+ - id - a unique identifier
+ - name - the name of the item
+ - unitCost - the unit cost if the item
+ - quantity - initialize to 5
+
+Once the list is returned:
+
+1. Store the response in a JavaScript object for use in the application.
+2. Increment the quantity of the first two items using the method you wrote in class last time (find an object by id in storage).
+3. Decrement the quantity of the last two items using the method you wrote in class last time (find an object by id in storage).
+4. Add the extended cost (quantity and unitCost) to the display.
+5. Add calculations for subtotal, tax amount, and grand total to the display. Calculations will be in the JavaScript code.
+       
+-->
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF"
+          crossorigin="anonymous">
+    <style>
+        .link {
+            color: blue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="initPage()">
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h1>Products List</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Name</td>
+                    <td>Unit Cost</td>
+                    <td>Quantity</td>
+                    <td>Ext Price</td>
+                </tr>
+                </thead>
+                <tbody id="productsBody">
+
+                </tbody>
+                <tfoot id="productsFooter">
+
+                </tfoot>
+            </table>
+        </div>
+        <div class="col-4">
+            ...
+        </div>
+    </div>
+</div>
+<script>
+
+    const TAX_RATE = .065;
+
+    /**
+     * In this method we will initialize the session storage object to be used.
+     */
+    function initPage() {
+        const ajaxRequest = new XMLHttpRequest();
+        // callback function called when ajax response is returned
+        ajaxRequest.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // store in session storage first because the response is already in JSON format
+                sessionStorage.setItem("products", this.responseText);
+                // get products back out of storage
+                const products = JSON.parse(sessionStorage.getItem("products"));
+                // per instructions increment the first two items
+                incrementQty(products[0].id);
+                incrementQty(products[1].id);
+                // per instructions decrement the last two items
+                decrementQty(products[3].id);
+                decrementQty(products[4].id);
+                // update UI
+                displayProducts();
+            }
+        };
+        ajaxRequest.open("GET", "https://tcmoorer.people.cofc.edu/CSCI215/Fall2022/Quiz10/Quiz10.php");
+        ajaxRequest.send();
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. increment the qty by one for the matching item (by id)
+     * 3. save the updated item back in session storage
+     * 4. call the calcTotal() to display
+     *
+     * @param itemName
+     */
+    function incrementQty(itemId) {
+        const products = JSON.parse(sessionStorage.getItem('products'));
+        for (let i=0; i<products.length; i++) {
+            if (itemId === products[i].id) {
+                products[i].qty++;
+                break;
+            }
+        }
+        sessionStorage.setItem('products', JSON.stringify(products));
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. decrement the qty by one for the matching item (by id)
+     * 3. save the updated item back in session storage
+     * 4. call the calcTotal() to display
+     *
+     * @param itemName
+     */
+    function decrementQty(itemId) {
+        const products = JSON.parse(sessionStorage.getItem('products'));
+        for (let i=0; i<products.length; i++) {
+            if (itemId === products[i].id) {
+                products[i].qty--;
+                break;
+            }
+        }
+        sessionStorage.setItem('products', JSON.stringify(products));
+    }
+
+    /**
+     * This method does the following:
+     *
+     * 1. fetch the items from the session storage and store in an object
+     * 2. loop through the items array
+     * 3. for each loop iteration calc the extended price and add the row to cart
+     *
+     * @param itemName
+     */
+    function displayProducts() {
+        const products = JSON.parse(sessionStorage.getItem('products'));
+
+        let productsBody = document.getElementById('productsBody');
+        productsBody.innerHTML = '';
+
+        let subTotal = 0;
+        let taxAmount = 0;
+        let grandTotal = 0;
+        for (let i=0; i<products.length; i++) {
+            let extPrice = products[i].unitPrice * products[i].qty;
+            subTotal += extPrice;
+            let row = `
+                <tr>
+                    <td>${products[i].id}</td>
+                    <td>${products[i].name}</td>
+                    <td>$${products[i].unitPrice}</td>
+                    <td>${products[i].qty}</td>
+                    <td>$${extPrice.toFixed(2)}</td>
+                </tr>
+            `;
+            productsBody.innerHTML += row;
+        }
+        // calc tax
+        taxAmount = subTotal * TAX_RATE;
+        // calc grand total
+        grandTotal = subTotal + taxAmount;
+
+        //display total rows
+        let totals = `
+            <tr>
+                <td colspan="4">Subtotal</td>
+                <td>$${subTotal.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td colspan="4">Tax Amount</td>
+                <td>$${taxAmount.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td colspan="4">Grand Total</td>
+                <td>$${grandTotal.toFixed(2)}</td>
+            </tr>
+        `;
+        document.getElementById('productsFooter').innerHTML = totals;
+
+    }
+
+</script>
+</body>
+</html>

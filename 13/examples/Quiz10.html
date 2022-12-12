@@ -1,0 +1,412 @@
+<!--
+    In Class Assignment
+
+    Write a JavaScript program that defines an array of objects that is stored using
+    browser storage. Each object in the array will have the following attributes:
+
+    - id - a unique identifier
+    - name - the name of the item
+    - unitCost - the unit cost if the item
+    - quantity - initialize to 0
+
+   Use the following instructions:
+    1. Write a method that will populate the array and store it in the session storage.
+    2. Write a method to find an object by id in storage and increment its quantity by 1.
+    3. Write a method to find an object by id in storage and decrement its quantity by 1.
+    4. Write a method that displays the contents of the array in the browser. Allow the user
+       to increment or decrement the count using JavaScript events and the methods defined
+       above. Once the qty is changed the updated values should display to the user.
+-->
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css"
+    rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF"
+    crossorigin="anonymous">
+    <title>Essential Oils</title>
+    <style>
+    .link {
+        color: blue;
+        cursor: pointer;
+    }
+body {
+    background-color: darkolivegreen;
+}
+    .container {
+        background-color: linen;
+        color: darkolivegreen;
+    }
+
+    tr {
+        color: darkolivegreen;
+    }
+    h1 {
+        text-align: center;
+    }
+    </style>
+</head>
+<body onload="initPage()">
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h1>Essential Oils Popup Shop</h1>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Image</td>
+                        <td>Name & ID</td>
+                        <td>Description</td>
+                        <td>Cost</td>
+                        <td>Quantity</td>
+                    </tr>
+                    </thead>
+                    <tbody id="productsBody">
+                        <tr>
+                            <td><img width="120" src="https://tyrteoslm.stu.cofc.edu/PROGRAMMING/eucalyptus.webp" alt="Eucalyptus"></td>
+                            <td>b92d300d-6504-4dbd-8ec0-e07856a8b1a7<br><br><strong>Eucalyptus</strong></td>
+                            <td>Eucalyptus is an Australian leaf distilled by steam and smells of fresh menthol. <br>Its botanical name is <i>Eucalyptus globulus.</i> <br>Blends well with cedarwood, frankincense, lavender, and rosemary.</td>
+                            <td>$2.99</td>
+                            <td class="text-end">5</td>
+                        </tr>
+                        <tr>
+                            <td><img width="120" src="https://tyrteoslm.stu.cofc.edu/PROGRAMMING/lavender.webp" alt="Lavender"></td>
+                            <td>77b72895-e2fa-4614-bfbb-5c216880c4a6<br><br><strong>Lavender</strong></td>
+                            <td>Lavender is derived from flowering tops and is described as smelling woody and herbaceous. <br>Its scientific name is <i>Lavandula Angustifolia.</i> 
+                                <br>Blends well with clove bud, geranium, neroli, and vetiver.</td>
+                            <td>$2.99</td>
+                            <td class="text-end">5</td>
+                        </tr>
+                        <tr>
+                            <td><img width="120" src="https://tyrteoslm.stu.cofc.edu/PROGRAMMING/peppermint.webp" alt="Peppermint"></td>
+                            <td>c5f8887b-5000-4832-856b-5abfd8d4fe24<br><br><strong>Peppermint</strong></td>
+                            <td>Peppermint is a strong aroma deriving its oil from the tops of flowers. It has a thin consistency and smells sharp and minty. <br>Its scientific name is <i>Mentha piperita</i>. <br>
+                            Blends well with juniper, lavender, cypress, and marjoram.</td>
+                            <td>$5.99</td>
+                            <td class="text-end">5</td>
+                        </tr>
+                        <tr>
+                            <td><img width="120" src="https://tyrteoslm.stu.cofc.edu/PROGRAMMING/bergamot.jpg" alt="Bergamot"></td>
+                            <td>c02461bb-2eb8-4f75-8f58-f831bcfffbd8<br><br><strong>Bergamot</strong></td>
+                            <td>Bergamot is an aroma concocted by the oil of fruit peels. <br>Its scientific name is <i>Citrus Bergamia</i>, and it found its origins in Italy. <br>Blends well with lavender, lemon, and black pepper.</td>
+                            <td>$3.99</td>
+                            <td class="text-end">5</td>
+                            
+                        </tr>
+                        <tr>
+                            <td><img width="120" src="https://tyrteoslm.stu.cofc.edu/PROGRAMMING/oregano.jpg" alt="Oregano"></td>
+                            <td>c5a30dcb-4e5f-4ec3-8e30-d23806927c9b<br><br><strong>Oregano</strong></td>
+                            <td>Oregano is an herb originating from Turkey and is extracted through steam distillation. <br>Its botanical name is <i>Origanum vulgare.</i> <br>Blends well with bergamot, lemon, orange, and sandalwood.</td>
+                            <td>$4.99</td>
+                            <td class="text-end">5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-4">
+                <h1>Shopping Cart</h1>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td class="text-end">Calculations</td>
+                    </tr>
+                    </thead>
+                    <tbody id="cartBody">
+                    </tbody>
+                    <tfoot id="cartFooter">
+                        <tr>
+                            <td colspan="3"><strong>Subtotal:</strong></td>
+                            <td class="text-end">$104.75</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><strong>Tax Amount:</strong></td>
+                            <td class="text-end">$6.80</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><strong>Grand Total:</strong></td>
+                            <td class="text-end">$111.55</td>
+                        </tr>
+                    </tfoot>
+            </table>
+            </div>
+        </div>
+    </div>
+<script>
+
+
+const TAX_RATE = .065;
+const cart = [
+    id = "",
+    name = "",
+    unitCost = "",
+    quantity = ""
+];
+cart[0] = {id: 1, name: "Eucalyptus", unitPrice: 12.99, quantity: 5};
+cart[1] = {id: 2, name: "Lavender", unitPrice: 12.99, quantity: 5};
+cart[2] = {id: 3, name: "Peppermint", unitPrice: 15.99, quantity: 5};
+cart[3] = {id: 4, name: "Bergamot", unitPrice: 13.99, quantity: 5};
+cart[4] = {id: 5, name: "Oregano", unitPrice: 14.99, quantity: 5};
+/* const cart = {
+        "id": "", 
+        "name": "", 
+        "unitCost": 0, 
+        "quantity": 0,
+        "subTotal": 0,
+        "taxTotal": 0,
+        "grandTotal": 0
+};
+
+cart[0] + cart[1] 
+*/
+
+function initPage() {
+    const ajaxRequest = new XMLHttpRequest();
+        // callback function called when ajax response is returned
+        ajaxRequest.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // store in session storage first because the response is already in JSON format
+                sessionStorage.setItem("cart", this.responseText);
+                // get products back out of storage
+                const cart = JSON.parse(sessionStorage.getItem("cart"));
+                // per instructions increment the first two items
+                incrementQty(cart[0].name);
+                decrementQty(cart[0].name);
+                // each
+                incrementQty(cart[1].name);
+                decrementQty(cart[1].name);
+                // per instructions decrement the last two items
+                decrementQty(cart[3].id);
+                decrementQty(cart[4].id);
+                // update UI
+                displayProducts();
+            }
+        };
+        ajaxRequest.open("GET", "https://tyrteoslm.stu.cofc.edu/PROGRAMMING/13/examples/Quiz10.php");
+        ajaxRequest.send();
+    }
+
+function loadAjax(url, cFunction) {
+        const ajaxRequest = new XMLHttpRequest();
+        ajaxRequest.onload = function() { cFunction(this); }
+        ajaxRequest.open("GET", url);
+        ajaxRequest.send();
+    }
+
+
+    
+function addItem(itemName) {
+    let cart = JSON.parse(sessionStorage.getItem("cart"));
+    // 2. add item to array
+    let item = { name: itemName };
+    cart.push(item);
+
+    // 3. save updates in storage
+    let cartJSON = JSON.stringify(cart);
+    sessionStorage.setItem("cart", cartJSON);
+document.getElementById('cartBody').innerHTML;
+    // update total
+    calcTotal();
+}
+function incrementQty(itemName) {
+        // get item from storage and increment qty by 1
+        let cart = JSON.parse(sessionStorage.getItem("cart"));
+        for (let i=0; i<cart.length; i++) {
+            // increment the qty for the matching item
+            if (cart[i].name === itemName) {
+                cart[i].quantity += 2;
+            }
+        }
+
+        // save the updated value back into storage
+        let cartJSON = JSON.stringify(cart);
+        sessionStorage.setItem("cart", cartJSON);
+
+        // call method to calculate the total and display
+        calcTotal();
+    }
+
+    function decrementQty(itemName) {
+        // get item from storage and decrement qty by 1
+        let cart = JSON.parse(sessionStorage.getItem("cart"));
+        for (let i=0; i<cart.length; i++) {
+            // increment the qty for the matching item
+            if (cart[i].name === itemName) {
+                cart[i].quantity -= 2;
+            }
+        }
+
+        // save the updated value back into storage
+        let cartJSON = JSON.stringify(cart);
+        sessionStorage.setItem("cart", cartJSON);
+
+        // call method to calculate the total and display
+        calcTotal();
+    }
+function calcTotal() {
+    let cart = JSON.parse(sessionStorage.getItem("cart"));
+    
+    // clear cartBody so that it can be updated
+    let totalDiv = document.getElementById("cartBody");
+    totalDiv.innerHTML = "";
+
+    // loop and calc item total (price * qty)
+    for (let i=0; i<cart.length; i++) {
+        let extPrice = cart[i].unitCost * cart[i].quantity;
+        let totalDiv = document.getElementById("cartBody");
+        totalDiv.innerHTML = "";
+        let row = `
+            <tr>
+                <td>${cart[i].name}</td>
+                <td>${cart[i].unitCost}</td>
+                <td>
+                    ${cart[i].quantity}
+                    <span onClick="incrementQty('${cart[i].name}')" class="link">(+)</span>
+                    <span onClick="decrementQty('${cart[i].name}')" class="link">(-)</span>
+                </td>
+                <td>$${extPrice}</td>
+            </tr>
+            `;
+            totalDiv.innerHTML += row;
+            displayEstimate(cart);
+    }
+    /*ajaxRequest.open("GET", "https://tyrteoslm.stu.cofc.edu/PROGRAMMING/13/examples/Quiz10.php");
+        ajaxRequest.send();
+        */
+}
+
+  function displayCart() {
+    let ajaxRequest = new XMLHttpRequest();
+            ajaxRequest.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let cart = JSON.parse(this.responseText);
+                    // clear cartBody so that it can be updated
+                    let totalPriceDiv = document.getElementById("cartFooter");
+                    totalPriceDiv.innerHTML = "";
+                }
+    // loop and calc item total (price * qty)
+    for (let i=0; i<cart.length; i++) {
+        let extPrice = cart[i].unitCost * cart[i].quantity;
+        let subTotal = extPrice;
+        let cartRow = `
+            <tr>
+                <td>$${extPrice}</td>
+                <td>${cart[i].unitCost}</td>
+                <td>${cart[i].subTotal}</td>
+                <td>${cart[i].taxAmount}</td>
+                <td>$${cart[i].grandTotal}</td>
+            </tr>
+            `;
+            totalPriceDiv.innerHTML += cartRow;
+
+            displayEstimate(cart);
+        }
+    }
+}
+/*
+        function updateValues() {
+            /*
+            rentalInfo.location.State=document.getElementById('pickUpState').value;
+            console.log(document.getElementById('pickUpDate').value);
+            rentalInfo.location.City=document.getElementById('pickUpCity').value;
+            
+            cart.subTotal += cart.unitCost * cart.quantity;
+            cart.subTotal = document.getElementById('subTotal').innerHTML;
+            cart.taxTotal = cart.subTotal * TAX_RATE;
+            cart.taxTotal = document.getElementById('taxAmount').innerHTML;
+            cart.grandTotal = cart.subTotal + cart.taxTotal;
+            cart.grandTotal = document.getElementById('grandTotal').innerHTML;
+            
+            console.log("updated values")
+            console.log(cart);
+        }
+*/
+        function displayEstimate(object) {
+            for (i in cart) {
+                cart.subTotal = cart.unitCost * cart.quantity;
+                cart.subTotal = document.getElementById('subTotal');
+                cart.taxTotal = cart.subTotal * TAX_RATE;
+                cart.taxTotal = document.getElementById('taxAmount');
+                cart.grandTotal = cart.subTotal + cart.taxTotal;
+                cart.grandTotal = document.getElementById('grandTotal');
+            }
+            document.getElementById('estimate').innerHTML= `
+            <div class="row"> 
+                <div class="col">
+                     <p class="m-1 text-end fw-bold">
+                    Subtotal:</p> 
+                </div> 
+            <div class="col-4">
+                 <p class="m-1">${cart.subTotal}</p> 
+                 </div> 
+             </div> 
+            <div class="row"> 
+                <div class="col"> 
+                    <p class="m-1 text-end fw-bold">
+                        Tax:
+                    </p> 
+                </div>
+                 <div class="col-4"> 
+                    <p class="m-1">${cart.taxTotal}</p> 
+                    </div> 
+                </div> 
+                 <div class="row"> 
+            <div class="col"> 
+                <p class="m-1 text-end fw-bold">
+                    Total:
+                    </p> 
+                </div> 
+                <div class="col-4"> 
+                    <p class="m-1">${cart.grandTotal}</p> 
+                    </div> 
+                </div>`
+                console.log("displayed info")
+                console.log(cart)
+            }
+
+            function submitCartInfo() {
+                let cart = JSON.parse(sessionStorage.getItem("cart"));
+
+                    displayEstimate(cart);
+                    displayCart();
+
+
+                    /* print array response
+
+
+                                        updateValues();
+
+
+
+
+            let ajaxRequest = new XMLHttpRequest();
+            ajaxRequest.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let outputString = '';
+                    for (let i=0; i<cart.length; i++) {
+                        subTotal += cart[i].unitCost * cart[i].quantity;
+                        outputString += `<tr>
+                                            <td>${cart[i].name}</td>
+                                            <td>$${cart[i].unitPrice}</td>
+                                            <td>${cart[i].quantity}</td>
+                                            <td>$${subTotal.toFixed(2)}</td>
+                                        </tr>`;
+                    }
+                    taxAmount = subTotal * TAX_RATE;
+                    grandTotal = subTotal + taxAmount;
+                    document.getElementById("estimate").innerHTML = outputString;
+                    document.getElementById("subTotal").innerHTML = cart.subTotal.toFixed(2);
+                    document.getElementById("taxAmount").innerHTML = cart.taxAmount.toFixed(2);
+                    document.getElementById("grandTotal").innerHTML = cart.grandTotal.toFixed(2);
+                    */
+                
+                }
+            
+
+        /*ajaxRequest.open("GET", "https://tyrteoslm.stu.cofc.edu/PROGRAMMING/13/examples/Quiz10.php");
+        ajaxRequest.send();
+            }
+        }  
+        */
+        
+
+</script>
+</body>
+</html>
